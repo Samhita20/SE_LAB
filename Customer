@@ -231,7 +231,7 @@ public class Customer extends JFrame{
 	    connectToDB();
 	  }
 	  
-	 /* public static void main(String[] args) 
+	  public static void main(String[] args) 
 	  {
 	    Customer cus = new Customer();
 
@@ -242,7 +242,7 @@ public class Customer extends JFrame{
 	    });
 	    cus.init();
 	    cus.GUI(); 
-	  }*/
+	  }
 	
 	
 
