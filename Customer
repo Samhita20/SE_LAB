@@ -95,17 +95,14 @@ public class Customer extends JFrame{
 	          }
 	        }
 	      });
-	      
-	      
-	   
-	    JPanel pn = new JPanel(new GridLayout(1,2));
-	    JPanel pn1 = new JPanel(new GridLayout(4, 1));
+	      JPanel pn = new JPanel(new GridLayout(1,1));
+	    JPanel pn1 = new JPanel(new GridLayout(4, 4));
 	    pn.add(CustomerIDListScrollPane);
 	    pn1.add(getCustomer);
 	    pn1.add(insertCustomer);
 	    pn1.add(deleteCustomer);
 	    pn1.add(updateCustomer);
-	    pn.add(pn1);
+	    pn1.add(pn);
 	    
 	    CidText = new JTextField(15);
 	    CidLabel = new JLabel("Customer ID");
@@ -146,29 +143,26 @@ public class Customer extends JFrame{
 	    c.add(pn);
 	    c.add(pn2);
 	    c.add(pn3);
-	 
-
-	    setVisible(true);
-	    
-}
-	public void connectToDB() {
+	 setSize(500, 100);
+	    setVisible(false);
+	    public void connectToDB() {
 	    try {
 	      conn = DriverManager
-	          .getConnection("jdbc:oracle:thin:@localhost:1521:xe","System","OracleDBMS2090&");
+	          .getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","OracleDBMS2090&");
 	      stmt = conn.createStatement();
 
 	    } catch (SQLException connectException) {
 	      System.out.println(connectException.getMessage());
 	      System.out.println(connectException.getSQLState());
 	      System.out.println(connectException.getErrorCode());
-	      System.exit(0);
+	      System.exit(1);
 	    }
 	  }
 	
 	private void displaySQLErrors(SQLException e) {
 	    errorText.append("SQLException: " + e.getMessage() + "\n");
 	    errorText.append("SQLState:     " + e.getSQLState() + "\n");
-
+	    errorText.append("VendorError:  " + e.getErrorCode() + "\n");
 	  }
 
 	  private void init()
@@ -176,7 +170,7 @@ public class Customer extends JFrame{
 	    connectToDB();
 	  }
 	  
-	  public static void main(String[] args) 
+	 /* public static void main(String[] args) 
 	  {
 	    Customer cus = new Customer();
 
@@ -187,7 +181,7 @@ public class Customer extends JFrame{
 	    });
 	    cus.init();
 	    cus.GUI(); 
-	  }
+	  }*/
 	
 	
 
