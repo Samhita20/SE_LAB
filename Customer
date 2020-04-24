@@ -19,7 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-//import javax.swing.JScrollPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -134,8 +134,28 @@ public class Customer extends JFrame{
 	        }
 	      }
 	    });
-	      JPanel pn = new JPanel(new GridLayout(1,1));
-	    JPanel pn1 = new JPanel(new GridLayout(4, 4));
+	    
+	     updateCustomer = new JButton("Update Customer Details");
+	    updateCustomer.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	        try {
+	          Statement stmt = conn.createStatement();
+	          int i = stmt.executeUpdate("UPDATE Customer "
+	              + "SET mail='" + mailText.getText() + ", "
+	              + "password='" + passwordText.getText() + "', "
+	              + "name= '" + nameText.getText()+ "'," + "address= '" + addressText.getText() + "," + "phone=" + phoneText.getText() +  "WHERE CID = "
+	              + CustomerIDList.getSelectedValue());
+	          errorText.append("Updated " + i + " rows successfully");
+	          CustomerIDList.removeAll();
+	          loadCustomerDetails();
+	        } catch (SQLException insertException) {
+			   System.out.println("Error3");
+	          displaySQLErrors(insertException);
+	        }
+	      }
+	    });
+	      JPanel pn = new JPanel(new GridLayout(1,4));
+	    JPanel pn1 = new JPanel(new GridLayout(4, 1));
 	    pn.add(CustomerIDListScrollPane);
 	    pn1.add(getCustomer);
 	    pn1.add(insertCustomer);
@@ -149,7 +169,7 @@ public class Customer extends JFrame{
 	    addressLabel = new JLabel("Address");
 	    passwordText = new JTextField(15);
 	    passwordLabel = new JLabel("Password");
-	    mailText = new JTextField(20);
+	    mailText = new JTextField(15);
 	    mailLabel = new JLabel("Mail ID");
 	    nameText = new JTextField(15);
 	    nameLabel = new JLabel("Name");
@@ -159,7 +179,7 @@ public class Customer extends JFrame{
 	    errorText.setEditable(false);
 	    
 	    JPanel pn2 = new JPanel();
-	    pn2.setLayout(new GridLayout(6, 2));
+	    pn1.setLayout(new GridLayout(4, 2));
 	    pn2.add(CidLabel);
 	    pn2.add(CidText);
 	    pn2.add(nameLabel);
@@ -214,7 +234,7 @@ public class Customer extends JFrame{
 
 	    cus.addWindowListener((WindowListener) new WindowAdapter(){
 	      public void windowClosing(WindowEvent e) {
-	        System.exit(0);
+	        System.exit(1);
 	      }
 	    });
 	    cus.init();
