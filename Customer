@@ -1,0 +1,249 @@
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class Customer extends JFrame{
+
+	private Connection conn;
+	private Statement stmt;
+	private JList CustomerIDList;
+	private JLabel CidLabel,passwordLabel,addressLabel,mailLabel,nameLabel,phoneLabel;
+	private JButton getCustomer, insertCustomer,deleteCustomer,updateCustomer;
+	private JTextArea errorText;
+	private JTextField CidText,passwordText,addressText,mailText,nameText,phoneText;
+	private ResultSet rs;
+	public Customer()
+	{
+		try 
+		{
+	     Class.forName("oracle.jdbc.driver.OracleDriver");
+	    } 
+		catch (Exception e) 
+		{
+	      System.err.println("Unable to find and load driver");
+	      System.exit(1);
+	    }
+	}
+	private void loadCustomerDetails() throws SQLException
+	{
+		Vector v = new Vector();
+		Statement stmt = conn.createStatement(); 
+	    try 
+		{
+	      rs = stmt.executeQuery("SELECT * FROM Customer");
+	      while (rs.next()) 
+		  {
+	        v.addElement(rs.getString("CID"));
+	      }
+	    } 
+		catch (SQLException e) 
+		{ System.out.println("Error1");
+	      displaySQLErrors(e);
+	    }
+	    CustomerIDList.setListData(v);
+	}
+	public void GUI() throws SQLException 
+	  {
+	    Container c = getContentPane();
+	    c.setLayout(new FlowLayout());
+	    CustomerIDList = new JList();
+	    loadCustomerDetails();
+	    JScrollPane CustomerIDListScrollPane = new JScrollPane(CustomerIDList); 
+	    getCustomer = new JButton("Get Customer Details");
+	    getCustomer.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+	          try {
+	          rs = stmt.executeQuery("SELECT * FROM Customer");
+	            while (rs.next()) 
+	  		  {
+	              if (rs.getString("acc_id").equals(
+	                  CustomerIDList.getSelectedValue()))
+	                break;
+	            }
+	            if (!rs.isAfterLast()) {
+	              CidText.setText(rs.getString("CID"));
+	              addressText.setText(rs.getString("Address"));
+	              passwordText.setText(rs.getString("password"));
+	              mailText.setText(rs.getString("Mail"));
+	              nameText.setText(rs.getString("Name"));
+	              phoneText.setText(rs.getString("Phone"));
+	            }
+	          } catch (SQLException selectException) {
+	  		  System.out.println("Error2");
+	            displaySQLErrors(selectException);
+	          }
+	        }
+	      });
+	    insertCustomer = new JButton("Insert Customer Details");
+	    insertCustomer.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	        try {
+	          Statement stmt = conn.createStatement();
+	          int i = stmt
+	              .executeUpdate("INSERT INTO Customer VALUES(" + "'"
+	                  + CidText.getText() + "', " + "'"
+	                  + mailText.getText() + "', " + "'"
+	                  + passwordText.getText() + "', " + "'"+nameText.getText()
+	                  + "', " + "'"+addressText.getText()+ "'," + phoneText.getText() + ")" );
+	          errorText.append("\nInserted " + i + " rows successfully");
+	          CustomerIDList.removeAll();
+	          loadCustomerDetails();
+	        } catch (SQLException insertException) {
+			  System.out.println("Error3");
+	          displaySQLErrors(insertException);
+	        }
+	      }
+	    });
+	    
+	    deleteCustomer = new JButton("Delete Customer Details");
+	    deleteCustomer.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	        try {
+	          Statement stmt = conn.createStatement();
+	          int i = stmt
+	              .executeUpdate("DELETE FROM Customer WHERE CID = "
+	                  + CustomerIDList.getSelectedValue());
+	          errorText.append("\nDeleted " + i + " rows successfully");
+	          CustomerIDList.removeAll();
+	          loadCustomerDetails();
+	        } catch (SQLException insertException) {
+			  System.out.println("Error4");
+	          displaySQLErrors(insertException);
+	        }
+	      }
+	    });
+	    
+	    updateCustomer = new JButton("Update Customer Details");
+	    updateCustomer.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	        try {
+	          Statement stmt = conn.createStatement();
+	          int i = stmt.executeUpdate("UPDATE Customer "
+	              + "SET mail='" + mailText.getText() + "', "
+	              + "password='" + passwordText.getText() + "', "
+	              + "name= '" + nameText.getText()+ "'," + "address= '" + addressText.getText() + "'," + "phone=" + phoneText.getText() +  "WHERE CID = "
+	              + CustomerIDList.getSelectedValue());
+	          errorText.append("\nUpdated " + i + " rows successfully");
+	          CustomerIDList.removeAll();
+	          loadCustomerDetails();
+	        } catch (SQLException insertException) {
+			   System.out.println("Error5");
+	          displaySQLErrors(insertException);
+	        }
+	      }
+	    });
+	    JPanel pn = new JPanel(new GridLayout(1,2));
+	    JPanel pn1 = new JPanel(new GridLayout(4, 1));
+	    pn.add(CustomerIDListScrollPane);
+	    pn1.add(getCustomer);
+	    pn1.add(insertCustomer);
+	    pn1.add(deleteCustomer);
+	    pn1.add(updateCustomer);
+	    pn.add(pn1);
+	    
+	    CidText = new JTextField(15);
+	    CidLabel = new JLabel("Customer ID");
+	    addressText = new JTextField(15);
+	    addressLabel = new JLabel("Address");
+	    passwordText = new JTextField(15);
+	    passwordLabel = new JLabel("Password");
+	    mailText = new JTextField(15);
+	    mailLabel = new JLabel("Mail ID");
+	    nameText = new JTextField(15);
+	    nameLabel = new JLabel("Name");
+	    phoneText = new JTextField(15);
+	    phoneLabel = new JLabel("Phone no.");
+	    errorText = new JTextArea(5, 15);
+	    errorText.setEditable(false);
+	    
+	    JPanel pn2 = new JPanel();
+	    pn2.setLayout(new GridLayout(6, 2));
+	    pn2.add(CidLabel);
+	    pn2.add(CidText);
+	    pn2.add(nameLabel);
+	    pn2.add(nameText);
+	    pn2.add(phoneLabel);
+	    pn2.add(phoneText);
+	    pn2.add(addressLabel);
+	    pn2.add(addressText);
+	    pn2.add(mailLabel);
+	    pn2.add(mailText);
+	    pn2.add(passwordLabel);
+	    pn2.add(passwordText);
+	   
+	    
+	    
+	    
+	    JPanel pn3 = new JPanel();
+	    pn3.add(new JScrollPane(errorText));
+	    
+	    c.add(pn);
+	    c.add(pn2);
+	    c.add(pn3);
+	 
+	    setSize(500, 500);
+	    setVisible(true);
+	    
+}
+	public void connectToDB() {
+	    try {
+	      conn = DriverManager
+	          .getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","OracleDBMS2090&");
+	      stmt = conn.createStatement();
+
+	    } catch (SQLException connectException) {
+	      System.out.println(connectException.getMessage());
+	      System.out.println(connectException.getSQLState());
+	      System.out.println(connectException.getErrorCode());
+	      System.exit(1);
+	    }
+	  }
+	
+	private void displaySQLErrors(SQLException e) {
+	    errorText.append("SQLException: " + e.getMessage() + "\n");
+	    errorText.append("SQLState:     " + e.getSQLState() + "\n");
+	    errorText.append("VendorError:  " + e.getErrorCode() + "\n");
+	  }
+
+	  private void init()
+	  {
+	    connectToDB();
+	  }
+	  
+	 /* public static void main(String[] args) 
+	  {
+	    Customer cus = new Customer();
+
+	    cus.addWindowListener((WindowListener) new WindowAdapter(){
+	      public void windowClosing(WindowEvent e) {
+	        System.exit(0);
+	      }
+	    });
+	    cus.init();
+	    cus.GUI(); 
+	  }*/
+	
+	
+
+}
