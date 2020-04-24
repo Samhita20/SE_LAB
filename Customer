@@ -95,6 +95,45 @@ public class Customer extends JFrame{
 	          }
 	        }
 	      });
+	      
+	        insertCustomer = new JButton("Insert Customer Details");
+	    insertCustomer.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	        try {
+	          Statement stmt = conn.createStatement();
+	          int i = stmt
+	              .executeUpdate("INSERT INTO Customer VALUES(" + "'"
+	                  + CidText.getText() + "', " + "'"
+	                  + mailText.getText() + "', " + "'"
+	                  + passwordText.getText() + "', " + "'"+nameText.getText()
+	                  + "', " + "'"+addressText.getText()+ "'," + phoneText.getText() + ")" );
+	          errorText.append("\nInserted " + i + " rows successfully");
+	          CustomerIDList.removeAll();
+	          loadCustomerDetails();
+	        } catch (SQLException insertException) {
+			  System.out.println("Error3");
+	          displaySQLErrors(insertException);
+	        }
+	      }
+	    });
+	    
+	    deleteCustomer = new JButton("Delete Customer Details");
+	    deleteCustomer.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	        try {
+	          Statement stmt = conn.createStatement();
+	          int i = stmt
+	              .executeUpdate("DELETE FROM Customer WHERE CID = "
+	                  + CustomerIDList.getSelectedValue());
+	          errorText.append("\nDeleted " + i + " rows successfully");
+	          CustomerIDList.removeAll();
+	          loadCustomerDetails();
+	        } catch (SQLException insertException) {
+			  System.out.println("Error4");
+	          displaySQLErrors(insertException);
+	        }
+	      }
+	    });
 	      JPanel pn = new JPanel(new GridLayout(1,1));
 	    JPanel pn1 = new JPanel(new GridLayout(4, 4));
 	    pn.add(CustomerIDListScrollPane);
@@ -102,7 +141,7 @@ public class Customer extends JFrame{
 	    pn1.add(insertCustomer);
 	    pn1.add(deleteCustomer);
 	    pn1.add(updateCustomer);
-	    pn1.add(pn);
+	    pn.add(pn1);
 	    
 	    CidText = new JTextField(15);
 	    CidLabel = new JLabel("Customer ID");
@@ -110,7 +149,7 @@ public class Customer extends JFrame{
 	    addressLabel = new JLabel("Address");
 	    passwordText = new JTextField(15);
 	    passwordLabel = new JLabel("Password");
-	    mailText = new JTextField(15);
+	    mailText = new JTextField(20);
 	    mailLabel = new JLabel("Mail ID");
 	    nameText = new JTextField(15);
 	    nameLabel = new JLabel("Name");
@@ -148,7 +187,7 @@ public class Customer extends JFrame{
 	    public void connectToDB() {
 	    try {
 	      conn = DriverManager
-	          .getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","OracleDBMS2090&");
+	          .getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","OracleDBMS2090*");
 	      stmt = conn.createStatement();
 
 	    } catch (SQLException connectException) {
@@ -162,7 +201,6 @@ public class Customer extends JFrame{
 	private void displaySQLErrors(SQLException e) {
 	    errorText.append("SQLException: " + e.getMessage() + "\n");
 	    errorText.append("SQLState:     " + e.getSQLState() + "\n");
-	    errorText.append("VendorError:  " + e.getErrorCode() + "\n");
 	  }
 
 	  private void init()
@@ -170,7 +208,7 @@ public class Customer extends JFrame{
 	    connectToDB();
 	  }
 	  
-	 /* public static void main(String[] args) 
+	 public static void main(String[] args) 
 	  {
 	    Customer cus = new Customer();
 
@@ -181,7 +219,7 @@ public class Customer extends JFrame{
 	    });
 	    cus.init();
 	    cus.GUI(); 
-	  }*/
+	  }
 	
 	
 
