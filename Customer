@@ -23,7 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Customer extends JFrame{
+public class Customer extends JFrame {
 
 	private Connection conn;
 	private Statement stmt;
