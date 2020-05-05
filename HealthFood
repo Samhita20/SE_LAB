@@ -1,0 +1,30 @@
+package JUnitTestPackage;
+import java.util.*;
+
+public class HealthSuggestions {
+	public String healthCalculator(double ht,double wt)
+	{
+		double bmi;
+		String msg;
+		bmi=wt/(ht*ht);
+    if(bmi<=18.5)
+			msg="Choose from food with cheese and lots of nuts";
+		else if((bmi>18.5) && (bmi<=24.9))
+			msg="Choose from food with veggies, fruits, whole grains, milk, nuts";
+		else if((bmi>25) && (bmi<=29.9))
+			msg="Choose from food with lots of green veggies and fruits";
+		else 
+			msg="Choose from foods with whole grains, dals, seasonal vegetables";	
+		return msg;
+	}
+    public static void main(String[] args)
+    {
+        double ht,wt;
+        String sugg;
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter height and weight");
+        ht=in.nextDouble();
+        wt=in.nextDouble();
+        sugg=healthCalculator(ht,wt);
+     }
+  }
