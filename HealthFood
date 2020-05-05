@@ -23,7 +23,7 @@ public class HealthSuggestions {
         String sugg;
         Scanner in = new Scanner(System.in);
         System.out.println("Enter a health problem you face");
-        info=in.nextLine();
+        info=in.nextLine(); 
         sugg=healthCalculator(info);
      }
   }
